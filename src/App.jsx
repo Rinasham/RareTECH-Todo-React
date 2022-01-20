@@ -1,23 +1,22 @@
 import './App.css';
 import React from 'react';
+// 定数データ
+import {INIT_TODOS} from './constant/data';
 
-const initTodo = [
-  {
-    id: 1,
-    title: "Todo1",
-  },
-  {
-    id: 2,
-    title: "Todo2",
-  }
-]
+// コンポーネント
+import {AddTodo} from './components/AddTodo';
+import { TodoList } from './components/TodoList';
+
+
+
+
 
 export const App = () => {
   /**
    * State
    */
   const [inputTodo, setInputTodo] = React.useState('');
-  const [todoList, setTodoList] = React.useState(initTodo);
+  const [todoList, setTodoList] = React.useState(INIT_TODOS);
   const onChangeTodoText = (event) => setInputTodo(event.target.value);
   // idを設定
   const [uniqueId, setUniqueId] = React.useState(todoList.length);
@@ -38,40 +37,33 @@ export const App = () => {
       setTodoList(newTodoArr);
       setInputTodo("");
       setUniqueId(newId)
-      console.log(newTodoArr)
-      console.log(todoList)
   }}
 
-  const onClickDelete= (index) => {
-    const newTodoArr = [...todoList];
-    newTodoArr.splice(index, 1);
-    setTodoList(newTodoArr);
+  const onClickDelete= (index,title) => {
+    if(window.confirm(`Delete ${title} Task?`)){
+      const newTodoArr = [...todoList];
+      newTodoArr.splice(index, 1);
+      setTodoList(newTodoArr);
+    }
   }
 
   return(
     <div className="App">
       <h1 className="title">Todo List</h1>
       <section className="common-area">
-        <h2 className="addTitle">ADD TODO</h2>
-        <input type="text" placeholder="NEW TODO"
-          value={inputTodo} onChange={onChangeTodoText}
-          onKeyDown={onKeyDownAdd}
-          />
+        <AddTodo
+          inputTodo={inputTodo}
+          todoTextValue={onChangeTodoText}
+          addTodo={onKeyDownAdd}
+        />
       </section>
       <section className="common-area">
-        <ul className="todo-list">
-          {todoList.map((todo, index)=> {
-            return (
-              <li key={todo.id} className="todo">
-                <span className="task">{todo.title}</span>
-                <i className="far fa-trash-alt"
-                onClick={()=>onClickDelete(index)}></i>
-              </li>
-            )
-          })}
-        </ul>
+        <TodoList
+          todoList={todoList}
+          onClickDelete={onClickDelete}
+        />
       </section>
     </div>
-    )
+  )
 };
 
